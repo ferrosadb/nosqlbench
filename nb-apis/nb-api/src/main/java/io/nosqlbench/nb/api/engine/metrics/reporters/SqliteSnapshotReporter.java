@@ -45,6 +45,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A SQLite reporter that writes metrics using an OpenMetrics-aligned schema.
@@ -92,6 +93,7 @@ public class SqliteSnapshotReporter extends MetricsSnapshotReporterBase {
     private final Map<String, Integer> labelValueCache = new LinkedHashMap<>();
     private final Map<Map<String, String>, Integer> labelSetCache = new LinkedHashMap<>();
     private final Map<String, Integer> metricInstanceCache = new LinkedHashMap<>();
+    private final AtomicBoolean closed = new AtomicBoolean(false);
 
     public SqliteSnapshotReporter(NBComponent parent,
                                   String jdbcUrl,
@@ -356,6 +358,9 @@ public class SqliteSnapshotReporter extends MetricsSnapshotReporterBase {
 
     @Override
     public void onMetricsSnapshot(MetricsView view) {
+        if (closed.get()) {
+            return;
+        }
         long epochMillis = view.capturedAtEpochMillis();
         try {
             for (MetricFamily family : view.families()) {
@@ -756,6 +761,10 @@ public class SqliteSnapshotReporter extends MetricsSnapshotReporterBase {
 
     @Override
     protected void teardown() {
+        if (closed.get()) {
+            return;
+        }
+        closed.set(true);
         try {
             insertMetricFamily.close();
             insertSampleFamily.close();

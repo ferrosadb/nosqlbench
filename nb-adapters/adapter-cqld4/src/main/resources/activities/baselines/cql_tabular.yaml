@@ -49,7 +49,7 @@ blocks:
     params:
       prepared: false
     ops:
-      create_table: |
+      create_table_astra: |
         create table if not exists TEMPLATE(keyspace,baselines).TEMPLATE(table,tabular) (
          part text,
          clust text,

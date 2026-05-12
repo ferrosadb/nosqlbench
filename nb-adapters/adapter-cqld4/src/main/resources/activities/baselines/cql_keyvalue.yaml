@@ -45,7 +45,7 @@ blocks:
           );
   schema_astra:
     ops:
-     create_table:
+     create_table_astra:
       raw: |
         create table if not exists TEMPLATE(keyspace,baselines).TEMPLATE(table,keyvalue) (
         key text,

@@ -46,7 +46,7 @@ blocks:
     params:
       prepared: false
     ops:
-      create_table:
+      create_table_astra:
         raw: |
           CREATE TABLE IF NOT EXISTS TEMPLATE(keyspace,baselines).TEMPLATE(table,vectors) (
             key TEXT,
